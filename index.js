@@ -73,7 +73,7 @@ async function updateCommits(newPull, page) {
   }
 }
 
-async function updatePulls(existingPulls, page) {
+async function updatePulls(existingPulls, pullsJsonPath, page) {
   page = page || 1;
   const pulls = await GithubRequest(`pulls?state=closed&per_page=100&page=${page}`);
 
@@ -98,6 +98,8 @@ async function updatePulls(existingPulls, page) {
         await updateComments(newPull);
         await updateCommits(newPull);
         existingPulls.push(newPull);
+        fs.writeFileSync(pullsJsonPath, JSON.stringify(existingPulls));
+        console.log(`wrote pull ${pull.number} (${pull.title})`)
       } catch (error) {
         // If anything fails in fetching comments or commits, exclude PR
         console.log(error);
@@ -108,7 +110,7 @@ async function updatePulls(existingPulls, page) {
   if (queryNextPage) {
     await sleep(100);
     page++;
-    await updatePulls(existingPulls, page);
+    await updatePulls(existingPulls, pullsJsonPath, page);
   }
 }
 
@@ -116,8 +118,7 @@ async function investigateRepository() {
   const pullsJsonPath = `${settings.githubRepository}/pulls.json`;
   const existingPulls = fs.existsSync(pullsJsonPath) ? JSON.parse(fs.readFileSync(pullsJsonPath)) : [];
 
-  await updatePulls(existingPulls);
-  fs.writeFileSync(pullsJsonPath, JSON.stringify(existingPulls));
+  await updatePulls(existingPulls, pullsJsonPath);
 
   console.log(`All Pull Requests`);
   logStatistics(existingPulls);
