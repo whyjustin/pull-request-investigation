@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="CompilerConfiguration">
-    <option name="DEFAULT_COMPILER" value="Groovy-Eclipse" />
-  </component>
-  <component name="GreclipseSettings">
-    <option name="greclipsePath" value="$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-eclipse-batch/2.4.3-01/groovy-eclipse-batch-2.4.3-01.jar" />
-  </component>
-</project>
