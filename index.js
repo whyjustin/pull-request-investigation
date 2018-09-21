@@ -34,7 +34,7 @@ async function updateComments(newPull, page) {
   page = page || 1;
   newPull.comments = newPull.comments || [];
 
-  const comments = await GithubRequest(`pulls/${newPull.number}/comments?page=${page}`);
+  const comments = await GithubRequest(`pulls/${newPull.number}/comments?per_page=100&page=${page}`);
   comments.forEach((comment) => {
     newPull.comments.push({
       id: comment.id,
@@ -57,7 +57,7 @@ async function updateCommits(newPull, page) {
   page = page || 1;
   newPull.commits = newPull.commits || [];
 
-  const commits = await GithubRequest(`pulls/${newPull.number}/commits?page=${page}`);
+  const commits = await GithubRequest(`pulls/${newPull.number}/commits?per_page=100&page=${page}`);
   commits.forEach((commit) => {
     newPull.commits.push({
       sha: commit.sha,
@@ -75,7 +75,7 @@ async function updateCommits(newPull, page) {
 
 async function updatePulls(existingPulls, page) {
   page = page || 1;
-  const pulls = await GithubRequest(`pulls?state=closed&page=${page}`);
+  const pulls = await GithubRequest(`pulls?state=closed&per_page=100&page=${page}`);
 
   let queryNextPage = false;
   for (let i = 0; i < pulls.length; i++) {
@@ -205,8 +205,10 @@ function logStatistics(pullRequestSet) {
   });
 }
 
-if (!fs.existsSync(settings.githubRepository)) {
+if(!fs.existsSync(settings.githubRepository.split('/')[0])) {
   fs.mkdirSync(settings.githubRepository.split('/')[0]);
+}
+if (!fs.existsSync(settings.githubRepository)) {
   fs.mkdirSync(settings.githubRepository);
 }
 investigateRepository();
